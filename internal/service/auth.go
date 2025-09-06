@@ -4,7 +4,7 @@ import (
 	"crypto/rand"
 	"fmt"
 	"math/big"
-	"otp-auth-service/internal/models"
+	"otp-auth-service/internal/model"
 	"otp-auth-service/internal/repository"
 	"time"
 
@@ -14,7 +14,7 @@ import (
 type AuthService interface {
 	RequestOTP(phoneNumber string) error
 	VerifyOTP(phoneNumber, otp string) (string, error)
-	GenerateJWT(user *models.User) (string, error)
+	GenerateJWT(user *model.User) (string, error)
 }
 
 type authService struct {
@@ -90,7 +90,7 @@ func (s *authService) VerifyOTP(phoneNumber, otp string) (string, error) {
 	user, err := s.userRepo.FindByPhoneNumber(phoneNumber)
 	if err != nil {
 		// User doesn't exist, create new one
-		user = &models.User{
+		user = &model.User{
 			PhoneNumber: phoneNumber,
 			CreatedAt:   time.Now().UTC(),
 		}
@@ -109,7 +109,7 @@ func (s *authService) VerifyOTP(phoneNumber, otp string) (string, error) {
 	return token, nil
 }
 
-func (s *authService) GenerateJWT(user *models.User) (string, error) {
+func (s *authService) GenerateJWT(user *model.User) (string, error) {
 	claims := jwt.MapClaims{
 		"user_id": user.ID,
 		"phone":   user.PhoneNumber,

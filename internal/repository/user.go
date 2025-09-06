@@ -1,16 +1,16 @@
 package repository
 
 import (
-	"otp-auth-service/internal/models"
+	"otp-auth-service/internal/model"
 
 	"gorm.io/gorm"
 )
 
 type UserRepository interface {
-	Create(user *models.User) error
-	FindByPhoneNumber(phoneNumber string) (*models.User, error)
-	FindByID(id uint) (*models.User, error)
-	FindAll(offset, limit int, search string) ([]models.User, int64, error)
+	Create(user *model.User) error
+	FindByPhoneNumber(phoneNumber string) (*model.User, error)
+	FindByID(id uint) (*model.User, error)
+	FindAll(offset, limit int, search string) ([]model.User, int64, error)
 	HealthCheck() error
 }
 
@@ -22,27 +22,27 @@ func NewUserRepository(db *gorm.DB) UserRepository {
 	return &userRepository{db: db}
 }
 
-func (r *userRepository) Create(user *models.User) error {
+func (r *userRepository) Create(user *model.User) error {
 	return r.db.Create(user).Error
 }
 
-func (r *userRepository) FindByPhoneNumber(phoneNumber string) (*models.User, error) {
-	var user models.User
+func (r *userRepository) FindByPhoneNumber(phoneNumber string) (*model.User, error) {
+	var user model.User
 	err := r.db.Where("phone_number = ?", phoneNumber).First(&user).Error
 	return &user, err
 }
 
-func (r *userRepository) FindByID(id uint) (*models.User, error) {
-	var user models.User
+func (r *userRepository) FindByID(id uint) (*model.User, error) {
+	var user model.User
 	err := r.db.First(&user, id).Error
 	return &user, err
 }
 
-func (r *userRepository) FindAll(offset, limit int, search string) ([]models.User, int64, error) {
-	var users []models.User
+func (r *userRepository) FindAll(offset, limit int, search string) ([]model.User, int64, error) {
+	var users []model.User
 	var total int64
 
-	query := r.db.Model(&models.User{})
+	query := r.db.Model(&model.User{})
 	if search != "" {
 		query = query.Where("phone_number ILIKE ?", "%"+search+"%")
 	}

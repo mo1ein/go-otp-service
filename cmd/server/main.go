@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"log"
 	"otp-auth-service/internal/config"
-	"otp-auth-service/internal/handlers"
+	"otp-auth-service/internal/handler"
 	"otp-auth-service/internal/middleware"
-	"otp-auth-service/internal/models"
+	"otp-auth-service/internal/model"
 	"otp-auth-service/internal/repository"
 	"otp-auth-service/internal/service"
 
@@ -47,8 +47,8 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// Auto migrate models
-	db.AutoMigrate(&models.User{}, &models.OTPRequest{})
+	// Auto migrate model
+	db.AutoMigrate(&model.User{}, &model.OTPRequest{})
 
 	// Initialize repositories
 	userRepo := repository.NewUserRepository(db)
@@ -58,10 +58,10 @@ func main() {
 	authService := service.NewAuthService(userRepo, otpRepo)
 	userService := service.NewUserService(userRepo)
 
-	// Initialize handlers
-	authHandler := handlers.NewAuthHandler(authService)
-	userHandler := handlers.NewUserHandler(userService)
-	otpStatsHandler := handlers.NewOTPStatsHandler(otpRepo)
+	// Initialize handler
+	authHandler := handler.NewAuthHandler(authService)
+	userHandler := handler.NewUserHandler(userService)
+	otpStatsHandler := handler.NewOTPStatsHandler(otpRepo)
 
 	// Initialize middleware
 	authMiddleware := middleware.NewAuthMiddleware()

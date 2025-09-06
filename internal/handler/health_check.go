@@ -1,5 +1,5 @@
-// internal/handlers/health_handler.go
-package handlers
+// internal/handler/health_handler.go
+package handler
 
 import (
 	"net/http"

@@ -1,14 +1,14 @@
 package service
 
 import (
-	"otp-auth-service/internal/models"
+	"otp-auth-service/internal/model"
 	"otp-auth-service/internal/repository"
 )
 
 type UserService interface {
-	GetUser(id uint) (*models.UserResponse, error)
-	GetUsers(offset, limit int, search string) ([]models.UserResponse, int64, error)
-	GetMe(userID uint) (*models.UserResponse, error)
+	GetUser(id uint) (*model.UserResponse, error)
+	GetUsers(offset, limit int, search string) ([]model.UserResponse, int64, error)
+	GetMe(userID uint) (*model.UserResponse, error)
 }
 
 type userService struct {
@@ -19,28 +19,28 @@ func NewUserService(userRepo repository.UserRepository) UserService {
 	return &userService{userRepo: userRepo}
 }
 
-func (s *userService) GetUser(id uint) (*models.UserResponse, error) {
+func (s *userService) GetUser(id uint) (*model.UserResponse, error) {
 	user, err := s.userRepo.FindByID(id)
 	if err != nil {
 		return nil, err
 	}
 
-	return &models.UserResponse{
+	return &model.UserResponse{
 		ID:          user.ID,
 		PhoneNumber: user.PhoneNumber,
 		CreatedAt:   user.CreatedAt,
 	}, nil
 }
 
-func (s *userService) GetUsers(offset, limit int, search string) ([]models.UserResponse, int64, error) {
+func (s *userService) GetUsers(offset, limit int, search string) ([]model.UserResponse, int64, error) {
 	users, total, err := s.userRepo.FindAll(offset, limit, search)
 	if err != nil {
 		return nil, 0, err
 	}
 
-	var userResponses []models.UserResponse
+	var userResponses []model.UserResponse
 	for _, user := range users {
-		userResponses = append(userResponses, models.UserResponse{
+		userResponses = append(userResponses, model.UserResponse{
 			ID:          user.ID,
 			PhoneNumber: user.PhoneNumber,
 			CreatedAt:   user.CreatedAt,
@@ -50,13 +50,13 @@ func (s *userService) GetUsers(offset, limit int, search string) ([]models.UserR
 	return userResponses, total, nil
 }
 
-func (s *userService) GetMe(userID uint) (*models.UserResponse, error) {
+func (s *userService) GetMe(userID uint) (*model.UserResponse, error) {
 	user, err := s.userRepo.FindByID(userID)
 	if err != nil {
 		return nil, err
 	}
 
-	return &models.UserResponse{
+	return &model.UserResponse{
 		ID:          user.ID,
 		PhoneNumber: user.PhoneNumber,
 		CreatedAt:   user.CreatedAt,

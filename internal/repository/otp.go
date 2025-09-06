@@ -2,7 +2,7 @@ package repository
 
 import (
 	"context"
-	"otp-auth-service/internal/models"
+	"otp-auth-service/internal/model"
 	"time"
 
 	"github.com/redis/go-redis/v9"
@@ -44,7 +44,7 @@ func (r *otpRepository) IncrementRequestCount(phoneNumber string, expiration tim
 }
 
 func (r *otpRepository) RecordOTPRequest(phoneNumber string, successful bool) error {
-	otpRequest := &models.OTPRequest{
+	otpRequest := &model.OTPRequest{
 		PhoneNumber: phoneNumber,
 		RequestedAt: time.Now().UTC(),
 		Successful:  successful,
@@ -54,7 +54,7 @@ func (r *otpRepository) RecordOTPRequest(phoneNumber string, successful bool) er
 
 func (r *otpRepository) GetRequestCount(phoneNumber string, since time.Time) (int, error) {
 	var count int64
-	err := r.db.Model(&models.OTPRequest{}).
+	err := r.db.Model(&model.OTPRequest{}).
 		Where("phone_number = ? AND requested_at >= ?", phoneNumber, since.UTC()).
 		Count(&count).Error
 
@@ -63,7 +63,7 @@ func (r *otpRepository) GetRequestCount(phoneNumber string, since time.Time) (in
 
 func (r *otpRepository) GetSuccessfulRequestCount(phoneNumber string, since time.Time) (int, error) {
 	var count int64
-	err := r.db.Model(&models.OTPRequest{}).
+	err := r.db.Model(&model.OTPRequest{}).
 		Where("phone_number = ? AND requested_at >= ? AND successful = ?", phoneNumber, since, true).
 		Count(&count).Error
 	return int(count), err

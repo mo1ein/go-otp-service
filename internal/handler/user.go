@@ -1,5 +1,5 @@
-// internal/handlers/user_handler.go
-package handlers
+// internal/handler/user_handler.go
+package handler
 
 import (
 	"net/http"
@@ -24,7 +24,7 @@ func NewUserHandler(userService service.UserService) *UserHandler {
 // @Accept json
 // @Produce json
 // @Param id path int true "User ID"
-// @Success 200 {object} models.UserResponse
+// @Success 200 {object} model.UserResponse
 // @Failure 400 {object} map[string]string
 // @Failure 404 {object} map[string]string
 // @Failure 500 {object} map[string]string
@@ -95,7 +95,7 @@ func (h *UserHandler) GetUsers(c *gin.Context) {
 // @Tags users
 // @Accept json
 // @Produce json
-// @Success 200 {object} models.UserResponse
+// @Success 200 {object} model.UserResponse
 // @Failure 401 {object} map[string]string
 // @Failure 404 {object} map[string]string
 // @Failure 500 {object} map[string]string

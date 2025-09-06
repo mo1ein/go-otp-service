@@ -1,4 +1,4 @@
-package handlers
+package handler
 
 import (
 	"net/http"
@@ -36,7 +36,7 @@ func (h *OTPStatsHandler) GetOTPStats(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Phone number is required"})
 		return
 	}
-	
+
 	// Ensure phone number has + prefix
 	if !strings.HasPrefix(phoneNumber, "+") {
 		phoneNumber = "+" + phoneNumber

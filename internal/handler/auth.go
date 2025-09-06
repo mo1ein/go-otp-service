@@ -1,5 +1,5 @@
-// internal/handlers/auth_handler.go
-package handlers
+// internal/handler/auth_handler.go
+package handler
 
 import (
 	"net/http"
