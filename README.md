@@ -37,18 +37,6 @@ This separation keeps responsibilities small and makes it trivial to swap the st
 
 ---
 
-## Data model
-
-```json
-{
-  "id": "uuid",
-  "phone": "+989123456789",
-  "registered_at": "2025-09-06T12:34:56Z"
-}
-```
-
----
-
 ```mermaid
 sequenceDiagram
     participant Client
