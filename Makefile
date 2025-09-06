@@ -1,5 +1,10 @@
-# Makefile
-.PHONY: build up down logs clean migration-create migration-up migration-down
+.PHONY: build up down logs clean migration-create migration-up migration-down migration-status dev test build-goose
+
+# Load environment variables from .env file
+ifneq (,$(wildcard ./.env))
+    include .env
+    export
+endif
 
 # Docker commands
 build:
@@ -24,13 +29,13 @@ migration-create:
 	goose -dir migrations create $${name} sql
 
 migration-up:
-	goose -dir migrations postgres "host=0.0.0.0 port=5433 user=go-otp-service dbname=go-otp-service password=go-otp-service_password sslmode=disable" up
+	goose -dir migrations postgres "host=${DATABASE_POSTGRES_HOST} port=${DATABASE_POSTGRES_PORT} user=${DATABASE_POSTGRES_USER} dbname=${DATABASE_POSTGRES_NAME} password=${DATABASE_POSTGRES_PASSWORD} sslmode=${POSTGRES_SSL_MODE}" up
 
 migration-down:
-	goose -dir migrations postgres "host=localhost user=go-otp-service dbname=go-otp-service password=go-otp-service_password sslmode=disable" down
+	goose -dir migrations postgres "host=${DATABASE_POSTGRES_HOST} port=${DATABASE_POSTGRES_PORT} user=${DATABASE_POSTGRES_USER} dbname=${DATABASE_POSTGRES_NAME} password=${DATABASE_POSTGRES_PASSWORD} sslmode=${POSTGRES_SSL_MODE}" down
 
 migration-status:
-	goose -dir migrations postgres "host=localhost user=go-otp-service dbname=go-otp-service password=go-otp-service_password sslmode=disable" status
+	goose -dir migrations postgres "host=${DATABASE_POSTGRES_HOST} port=${DATABASE_POSTGRES_PORT} user=${DATABASE_POSTGRES_USER} dbname=${DATABASE_POSTGRES_NAME} password=${DATABASE_POSTGRES_PASSWORD} sslmode=${POSTGRES_SSL_MODE}" status
 
 # For local development without Docker
 dev:
