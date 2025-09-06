@@ -1,0 +1,86 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      # API Configuration
+      - API_HTTP_HOST=0.0.0.0
+      - API_HTTP_PORT=8080
+      # Database Configuration
+      - DATABASE_POSTGRES_HOST=db
+      - DATABASE_POSTGRES_PORT=5432
+      - DATABASE_POSTGRES_USER=go-otp-service
+      - DATABASE_POSTGRES_PASSWORD=go-otp-service_password
+      - DATABASE_POSTGRES_NAME=go-otp-service
+      # Redis Configuration
+      - DATABASE_REDIS_HOST=redis
+      - DATABASE_REDIS_PORT=6379
+      - DATABASE_REDIS_PASSWORD=redis_password
+      - DATABASE_REDIS_DATABASE=0
+      # Entrypoint script variables
+      - POSTGRES_HOST=db
+      - POSTGRES_USER=go-otp-service
+      - POSTGRES_PASSWORD=go-otp-service_password
+      - POSTGRES_DB=go-otp-service
+      - POSTGRES_SSL_MODE=disable
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - go-otp-service-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  db:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_USER=go-otp-service
+      - POSTGRES_PASSWORD=go-otp-service_password
+      - POSTGRES_DB=go-otp-service
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    networks:
+      - go-otp-service-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U go-otp-service"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+
+  # Redis
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes --requirepass redis_password
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - go-otp-service-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "redis_password", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  go-otp-service-network:
+    driver: bridge
